@@ -1,0 +1,9 @@
+---
+
+# Offline mode disables installation of requirements.yml
+offline: true
+
+exclude_paths:
+  - Taskfile.yml
+
+...

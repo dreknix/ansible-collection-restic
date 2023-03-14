@@ -1,0 +1,34 @@
+---
+
+- name: Create restic user
+  become: true
+  ansible.builtin.user:
+    name: restic
+    comment: Restic backup user
+    password_lock: true
+    create_home: true
+    system: true
+    ssh_key_type: ed25519
+    ssh_key_comment: "restic on {{ inventory_hostname }}"
+    ssh_key_passphrase: ""
+    generate_ssh_key: true
+    state: present
+  register: restic_user
+
+- name: Add restic public key
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ restic_user['name'] }}"
+    key: "{{ restic_user['ssh_public_key'] }}"
+    state: present
+  when: not restic_user['failed']
+  no_log: true
+
+- name: Retrieve private key
+  become: true
+  ansible.builtin.command: cat {{ restic_user['ssh_key_file'] }}
+  changed_when: false
+  register: restic_key
+  no_log: true
+
+...

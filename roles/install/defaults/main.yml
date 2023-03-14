@@ -1,0 +1,29 @@
+---
+
+restic_default_path: >-
+  {{ default_install_path | default('/usr/local', true) }}
+
+restic_bin_path: >-
+  {{ restic_default_path }}/bin/restic
+
+# See available releases: https://github.com/restic/restic/releases
+restic_version: 0.15.1  # 2022-03-14
+
+restic_os: linux
+restic_arch: amd64
+
+restic_url: "https://github.com/restic/restic/releases/download/\
+  v{{ restic_version }}/\
+  restic_\
+  {{ restic_version }}_{{ restic_os }}_{{ restic_arch }}.bz2"
+
+restic_tmp_path: >-
+  /tmp/restic_{{ restic_version }}
+
+restic_bash_completion_directory: >-
+  {{ restic_default_path }}/share/bash-completion/completions
+
+restic_bash_completion_path: >-
+  {{ restic_bash_completion_directory }}/restic
+
+...

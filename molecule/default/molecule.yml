@@ -1,0 +1,46 @@
+---
+
+driver:
+  name: docker
+
+platforms:
+  - name: ubuntu-server
+    image: ubuntu:22.04
+    groups:
+      - restic_servers
+  - name: ubuntu-client
+    image: ubuntu:22.04
+    groups:
+      - restic_clients
+  - name: debian-server
+    image: debian:11
+    groups:
+      - restic_servers
+  - name: debian-client
+    image: debian:11
+    groups:
+      - restic_clients
+
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+
+provisioner:
+  name: ansible
+  log: false
+  options:
+    vvv: false
+  playbooks:
+    converge: converge.yml
+  inventory:
+    host_vars:
+      ubuntu-client:
+        restic_server: ubuntu-server
+      debian-client:
+        restic_server: debian-server
+
+verifier:
+  name: testinfra
+
+...

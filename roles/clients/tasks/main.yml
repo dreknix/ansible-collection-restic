@@ -1,0 +1,28 @@
+---
+
+- name: Configure restic clients
+  ansible.builtin.debug:
+    msg: Configure restic clients
+
+- debug:
+    var: hostvars['ubuntu-server'].ansible_default_ipv4.address
+
+- debug:
+    var: hostvars['ubuntu-server'].restic_key.stdout
+
+- name: Create ~/.ssh directory
+  ansible.builtin.file:
+    name: "{{ ansible_env.HOME }}/.ssh"
+    state: directory
+    mode: "u=rwx,go=rx"
+
+- name: Write restic private key
+  ansible.builtin.template:
+    src: ssh_id_restic.j2
+    dest: "{{ ansible_env.HOME }}/.ssh/id_restic"
+    mode: "u=rw,go="
+  vars:
+    restic_private_key: "{{ hostvars[restic_server].restic_key.stdout }}"
+  when: restic_server | length > 0
+
+...

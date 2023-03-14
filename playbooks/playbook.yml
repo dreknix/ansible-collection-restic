@@ -1,0 +1,47 @@
+---
+
+#
+# Setup Restic backup system
+#
+
+- name: Setup Restic backup system
+  hosts: '{{ target | default("all") }}'
+  gather_facts: true
+
+  tasks:
+
+    - name: Block dreknix.restic
+      tags:
+        - restic
+      block:
+
+        - name: Block dreknix.restic.install
+          when: restic_configure_install | default(true) | bool
+          tags:
+            - restic
+          block:
+            - name: Include role dreknix.restic.install
+              ansible.builtin.include_role:
+                name: dreknix.restic.install
+
+        - name: Block dreknix.restic.servers
+          when: restic_configure_server | default(true) | bool
+                and 'restic_servers' in group_names
+          tags:
+            - restic_servers
+          block:
+            - name: Include role dreknix.restic.servers
+              ansible.builtin.include_role:
+                name: dreknix.restic.servers
+
+        - name: Block dreknix.restic.clients
+          when: restic_configure_clients | default(true) | bool
+                and 'restic_clients' in group_names
+          tags:
+            - restic_clients
+          block:
+            - name: Include role dreknix.restic.clients
+              ansible.builtin.include_role:
+                name: dreknix.restic.clients
+
+...

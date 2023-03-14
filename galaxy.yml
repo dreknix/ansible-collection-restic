@@ -1,0 +1,26 @@
+---
+
+namespace: dreknix
+name: restic
+version: 1.0.0
+
+readme: README.md
+
+authors:
+  - dreknix https://github.com/dreknix
+
+description: Ansible roles for setup restic backup system
+
+license:
+  - MIT
+
+tags:
+  - linux
+
+dependencies: {}
+
+repository: https://github.com/dreknix/ansible-collection-restic
+
+build_ignore: []
+
+...
