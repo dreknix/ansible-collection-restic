@@ -17,6 +17,7 @@
 
         - name: Block dreknix.restic.install
           when: restic_configure_install | default(true) | bool
+                and ('restic_clients' in group_names or 'restic_servers' in group_names)
           tags:
             - restic
           block:
