@@ -4,12 +4,6 @@
   ansible.builtin.debug:
     msg: Configure restic clients
 
-- debug:
-    var: hostvars['ubuntu-server'].ansible_default_ipv4.address
-
-- debug:
-    var: hostvars['ubuntu-server'].restic_key.stdout
-
 - name: Create ~/.ssh directory
   ansible.builtin.file:
     name: "{{ ansible_env.HOME }}/.ssh"

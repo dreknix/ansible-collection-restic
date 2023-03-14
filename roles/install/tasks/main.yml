@@ -14,7 +14,8 @@
     and restic_binary.stat.executable
   changed_when: false
 
-- include_tasks: install.yml
+- name: Include 'install.yml'
+  ansible.builtin.include_tasks: install.yml
   vars:
     restic_version_string: "restic {{ restic_version }}"
   when: >
