@@ -17,6 +17,6 @@
     mode: "u=rw,go="
   vars:
     restic_private_key: "{{ hostvars[restic_server].restic_key.stdout }}"
-  when: restic_server | length > 0
+  when: restic_server | default("") | length > 0
 
 ...

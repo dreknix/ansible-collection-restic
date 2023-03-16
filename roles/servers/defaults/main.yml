@@ -1,0 +1,9 @@
+---
+
+restic_user_name: restic
+
+restic_backup_dir: /srv/backup
+
+restic_target_dir: restic
+
+...

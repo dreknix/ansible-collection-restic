@@ -1,0 +1,9 @@
+Match User {{ restic_user_name }}
+  ChrootDirectory {{ restic_backup_dir }}
+  ForceCommand internal-sftp
+  PasswordAuthentication no
+  PubkeyAuthentication yes
+  PermitTunnel no
+  AllowAgentForwarding no
+  AllowTcpForwarding no
+  X11Forwarding no
