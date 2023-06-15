@@ -1,22 +1,20 @@
 ---
 
-- name: Configure restic clients
-  ansible.builtin.debug:
-    msg: Configure restic clients
-
 - name: Create ~/.ssh directory
+  become: true
   ansible.builtin.file:
-    name: "{{ ansible_env.HOME }}/.ssh"
+    name: '~{{ ansible_become_user | default("root") }}/.ssh'
     state: directory
-    mode: "u=rwx,go=rx"
+    mode: '0755'
 
 - name: Write restic private key
+  become: true
   ansible.builtin.template:
     src: ssh_id_restic.j2
-    dest: "{{ ansible_env.HOME }}/.ssh/id_restic"
-    mode: "u=rw,go="
+    dest: '~{{ ansible_become_user | default("root") }}/.ssh/id_restic'
+    mode: '0600'
   vars:
-    restic_private_key: "{{ hostvars[restic_server].restic_key.stdout }}"
+    restic_private_key: '{{ hostvars[restic_server].restic_key.stdout }}'
   when: restic_server | default("") | length > 0
 
 ...
