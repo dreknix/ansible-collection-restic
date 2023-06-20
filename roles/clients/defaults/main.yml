@@ -1,0 +1,11 @@
+---
+
+restic_client_backup_tool_repo: git@github.com:dreknix/tools-restic-backup.git
+
+restic_client_backup_dir: /srv/restic
+
+restic_client_backup_cache_dir: /var/cache/restic
+
+restic_client_systemd_path: /usr/local/lib/systemd/system
+
+...

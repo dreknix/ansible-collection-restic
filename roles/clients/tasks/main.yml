@@ -17,4 +17,52 @@
     restic_private_key: '{{ hostvars[restic_server].restic_key.stdout }}'
   when: restic_server | default("") | length > 0
 
+- name: Get restic backup tool
+  become: true
+  ansible.builtin.git:
+    repo: '{{ restic_client_backup_tool_repo }}'
+    dest: '{{ restic_client_backup_dir | default("/srv/restic") }}'
+    accept_newhostkey: true
+  when: restic_client_backup_tool_repo is defined
+
+- name: Create environment variable file
+  become: true
+  ansible.builtin.template:
+    src: '.env.j2'
+    dest: '{{ restic_client_backup_dir | default("/srv/restic") }}/.env'
+    mode: '0600'
+
+- name: Create {{ restic_client_systemd_path }}
+  become: true
+  ansible.builtin.file:
+    path: '{{ restic_client_systemd_path }}'
+    state: directory
+    mode: '0755'
+
+- name: Create restic backup systemd service file
+  become: true
+  ansible.builtin.template:
+    src: restic-backup.service.j2
+    dest: '{{ restic_client_systemd_path }}/restic-backup.service'
+    mode: '0644'
+  notify: systemd_reload_systemd
+
+- name: Create restic backup systemd timer file
+  become: true
+  ansible.builtin.template:
+    src: restic-backup.timer.j2
+    dest: '{{ restic_client_systemd_path }}/restic-backup.timer'
+    mode: '0644'
+  notify: systemd_reload_systemd
+
+- name: Force all notified handlers to run at this point
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable restic-backup.timer
+  become: true
+  ansible.builtin.service:
+    name: restic-backup.timer
+    state: started
+    enabled: true
+
 ...

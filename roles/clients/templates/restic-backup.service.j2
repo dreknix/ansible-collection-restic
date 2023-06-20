@@ -1,0 +1,24 @@
+[Unit]
+Description=Restic Backup Service
+Documentation=man:restic(1)
+Documentation=https://restic.readthedocs.io/en/stable/
+Requires=local-fs.target
+Requires=network.target
+
+[Service]
+Type=oneshot
+ExecStart={{ restic_client_backup_dir }}/make_backup.sh
+WorkingDirectory={{ restic_client_backup_dir }}
+
+# TODO
+## Security hardening (see man 7 systemd.exec)
+PrivateTmp=true
+ProtectHome=read-only
+ProtectSystem=full
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+ProtectControlGroups=true
+PrivateDevices=true
+MemoryDenyWriteExecute=true
+ReadWritePaths={{ restic_client_backup_cache_dir }}
