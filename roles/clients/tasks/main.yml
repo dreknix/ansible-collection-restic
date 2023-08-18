@@ -14,8 +14,8 @@
     dest: '~{{ ansible_become_user | default("root") }}/.ssh/id_restic'
     mode: '0600'
   vars:
-    restic_private_key: '{{ hostvars[restic_server].restic_key.stdout }}'
-  when: restic_server | default("") | length > 0
+    restic_private_key: '{{ hostvars[restic_server_hostname].restic_key.stdout }}'
+  when: restic_server_hostname | default("") | length > 0
 
 - name: Get restic backup tool
   become: true
