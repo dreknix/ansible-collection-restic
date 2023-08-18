@@ -49,6 +49,7 @@
     group: root
     mode: "u=rwx,go=rx"
 
+# If this task fail, than the user has the wrong uid on this host
 - name: Configure restic target directory
   become: true
   ansible.builtin.file:
@@ -84,6 +85,7 @@
   register: sshd_restic_config
 
 - name: Restart sshd
+  become: true
   ansible.builtin.service:
     name: sshd
     state: restarted
