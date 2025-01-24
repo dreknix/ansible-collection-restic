@@ -57,7 +57,15 @@
   ansible.builtin.template:
     src: '.env.j2'
     dest: '{{ restic_backup_client_dir | default("/srv/restic") }}/.env'
-    mode: '0600'
+    mode: u=rw,go=
+
+- name: Create backup.exclude file
+  become: true
+  ansible.builtin.template:
+    src: 'backup.exclude.j2'
+    dest: '{{ restic_backup_client_dir | default("/srv/restic") }}/backup.exlude'
+    mode: u=rw,go=
+  when: restic_backup_exclude is defined
 
 - name: Create cache {{ restic_backup_client_cache_dir }}
   become: true
