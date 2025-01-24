@@ -17,7 +17,7 @@ restic_backup_repository: >-
 
 restic_backup_cmd: >-
   restic
-  {%- if restic_backup_proto is defined and restic_backup_proto == sftp and restic_backup_create_config -%}
+  {%- if restic_backup_proto is defined and restic_backup_proto == "sftp" and restic_backup_create_config -%}
     -o sftp.command='
          ssh
          {%- if restic_backup_user is defined -%}
