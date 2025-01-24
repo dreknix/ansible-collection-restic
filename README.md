@@ -28,36 +28,40 @@ Import the playbook of the collection and overwrite the default values of the
 collection variables:
 
 ``` yaml
-# Configure restic backup (add hosts into `restic_server` or `restic_clients`)
+# Configure restic backup (add hosts into `restic_servers` or `restic_clients`)
 - name: Setup restic backup
   ansible.builtin.import_playbook: dreknix.restic.playbook
   vars:
     restic_backup_proto: "sftp"
     restic_backup_user: "dreknix"
     restic_backup_host: "dreknix.example.org"
-    restic_backup_ssh_key_file: "~/.ssh/id_restic"
+    restic_backup_repository_path: restic/{{ inventory_hostname }}
 
-    restic_backup_cmd: >
-      restic
-        -o sftp.command='ssh {{ restic_backup_user }}@{{ restic_backup_host}}
-            -i {{ restic_ssh_key_file }}
-            -s sftp'
+    restic_backup_ssh_key_file: "~/.ssh/id_restic"
+    restic_backup_ssh_create_config: true
 
     restic_backup_report_email: "dreknix@example.com"
     restic_backup_report_on_success: false
     restic_backup_report_on_failure: true
+
+    restic_backup_prom_directory: /var/lib/prometheus/node-exporter
+
+    restic_backup_paths:
+      - /
+
+    restic_backup_exclude: |
+      ...list of files...
 ```
 
-    restic_backup_repository: "{{ restic_backup_proto }}::path/to/repository"
-    restic_backup_password:
-
 For more variables see
-[`roles/clients/templates/.env.j2`](roles/clients/templates/.env.j2).
+[`roles/clients/templates/.env.j2`](roles/clients/templates/.env.j2). The
+variables `restic_backup_repository` and `restic_back_cmd` are automatically
+created (see [`roles/clients/default/all.yml`](roles/clients/default/all.yml)).
 
 ## Available Tags and Groups
 
 The tag `restic` activates the playbook of the collection. The binary `restic`
-will be installed on all hosts in the groups `restic_server` and
+will be installed on all hosts in the groups `restic_servers` and
 `restic_clients`. The [restic backup script](
 https://github.com/dreknix/tools-restic-backup) will only be installed and
 configured on hosts of the group `restic_clients`.
