@@ -28,13 +28,14 @@ Import the playbook of the collection and overwrite the default values of the
 collection variables:
 
 ``` yaml
+# Configure restic backup (add hosts into `restic_server` or `restic_clients`)
 - name: Setup restic backup
   ansible.builtin.import_playbook: dreknix.restic.playbook
   vars:
     restic_backup_proto: "sftp"
     restic_backup_user: "dreknix"
     restic_backup_host: "dreknix.example.org"
-    restic_ssh_key_file: "~/.ssh/id_restic"
+    restic_backup_ssh_key_file: "~/.ssh/id_restic"
 
     restic_backup_cmd: >
       restic
@@ -43,8 +44,8 @@ collection variables:
             -s sftp'
 
     restic_backup_report_email: "dreknix@example.com"
-    restic_backup_report_on_success: "false"
-    restic_backup_report_on_failure: "true"
+    restic_backup_report_on_success: false
+    restic_backup_report_on_failure: true
 ```
 
     restic_backup_repository: "{{ restic_backup_proto }}::path/to/repository"
@@ -57,9 +58,9 @@ For more variables see
 
 The tag `restic` activates the playbook of the collection. The binary `restic`
 will be installed on all hosts in the groups `restic_server` and
-`restic_client`. The [restic backup script](
+`restic_clients`. The [restic backup script](
 https://github.com/dreknix/tools-restic-backup) will only be installed and
-configured on hosts of the group `restic_client`.
+configured on hosts of the group `restic_clients`.
 
 ## License
 
