@@ -28,16 +28,20 @@
   when: restic_backup_ssh_key is defined
 
 - name: Create SSH config for restic
+  become: true
   ansible.builtin.blockinfile:
     path: ~/.ssh/config
     block: |
-      Match {{ restic_backup_host }}
+      Host {{ restic_backup_host }}
         {% if restic_backup_user is defined -%}
         User          {{ restic_backup_user }}
         {% endif -%}
         IdentityFile  {{ restic_backup_ssh_key_file }}
     prepend_newline: true
     append_newline: true
+    insertafter: "EOF"
+    create: true
+    mode: u=rw,go=r
   when: restic_backup_ssh_create_config
 
 - name: Get restic backup tool
