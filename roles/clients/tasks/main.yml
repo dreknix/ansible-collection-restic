@@ -63,7 +63,7 @@
   become: true
   ansible.builtin.template:
     src: 'backup.exclude.j2'
-    dest: '{{ restic_backup_client_dir | default("/srv/restic") }}/backup.exlude'
+    dest: '{{ restic_backup_client_dir | default("/srv/restic") }}/backup.exclude'
     mode: u=rw,go=
   when: restic_backup_exclude is defined
 
