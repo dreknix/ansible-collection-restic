@@ -7,35 +7,65 @@
     state: directory
     mode: '0755'
 
-- name: Write restic private key
+- name: Write restic private key (from server)
   become: true
   ansible.builtin.template:
     src: ssh_id_restic.j2
-    dest: '~{{ ansible_become_user | default("root") }}/.ssh/id_restic'
+    dest: '{{ restic_backup_ssh_key_file }}'
     mode: '0600'
   vars:
     restic_private_key: '{{ hostvars[restic_server_hostname].restic_key.stdout }}'
   when: restic_server_hostname | default("") | length > 0
 
+- name: Write restic private key (from variable)
+  become: true
+  ansible.builtin.template:
+    src: ssh_id_restic.j2
+    dest: '{{ restic_backup_ssh_key_file }}'
+    mode: '0600'
+  vars:
+    restic_private_key: '{{ restic_backup_ssh_key }}'
+  when: restic_backup_ssh_key is defined
+
+- name: Create SSH config for restic
+  ansible.builtin.blockinfile:
+    path: ~/.ssh/config
+    block: |
+      Match {{ restic_backup_host }}
+        {% if restic_backup_user is defined -%}
+        User          {{ restic_backup_user }}
+        {% endif -%}
+        IdentityFile  {{ restic_backup_ssh_key_file }}
+    prepend_newline: true
+    append_newline: true
+  when: restic_backup_ssh_create_config
+
 - name: Get restic backup tool
   become: true
   ansible.builtin.git:
-    repo: '{{ restic_client_backup_tool_repo }}'
-    dest: '{{ restic_client_backup_dir | default("/srv/restic") }}'
+    repo: '{{ restic_backup_client_tool_repo }}'
+    dest: '{{ restic_backup_client_dir | default("/srv/restic") }}'
     accept_newhostkey: true
-  when: restic_client_backup_tool_repo is defined
+  when: restic_backup_client_tool_repo is defined
 
 - name: Create environment variable file
   become: true
   ansible.builtin.template:
     src: '.env.j2'
-    dest: '{{ restic_client_backup_dir | default("/srv/restic") }}/.env'
+    dest: '{{ restic_backup_client_dir | default("/srv/restic") }}/.env'
     mode: '0600'
 
-- name: Create {{ restic_client_systemd_path }}
+- name: Create cache {{ restic_backup_client_cache_dir }}
   become: true
   ansible.builtin.file:
-    path: '{{ restic_client_systemd_path }}'
+    path: '{{ restic_backup_client_cache_dir }}'
+    state: directory
+    mode: '0755'
+
+- name: Create {{ restic_backup_client_systemd_path }}
+  become: true
+  ansible.builtin.file:
+    path: '{{ restic_backup_client_systemd_path }}'
     state: directory
     mode: '0755'
 
@@ -43,7 +73,7 @@
   become: true
   ansible.builtin.template:
     src: restic-backup.service.j2
-    dest: '{{ restic_client_systemd_path }}/restic-backup.service'
+    dest: '{{ restic_backup_client_systemd_path }}/restic-backup.service'
     mode: '0644'
   notify: systemd_reload_systemd
 
@@ -51,7 +81,7 @@
   become: true
   ansible.builtin.template:
     src: restic-backup.timer.j2
-    dest: '{{ restic_client_systemd_path }}/restic-backup.timer'
+    dest: '{{ restic_backup_client_systemd_path }}/restic-backup.timer'
     mode: '0644'
   notify: systemd_reload_systemd
 

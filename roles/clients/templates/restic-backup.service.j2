@@ -7,14 +7,14 @@ Requires=network.target
 
 [Service]
 Type=oneshot
-ExecStart={{ restic_client_backup_dir }}/make_backup.sh
-WorkingDirectory={{ restic_client_backup_dir }}
+ExecStart={{ restic_backup_client_dir }}/make_backup.sh
+WorkingDirectory={{ restic_backup_client_dir }}
 
 ## Security hardening: see systemd.exec(7) and systemd.resource-control(5)
 PrivateTmp=true
 ProtectHome=read-only
 ProtectSystem=strict
-ReadWritePaths={{ restic_client_backup_cache_dir }}
+ReadWritePaths={{ restic_backup_client_cache_dir }}
 ReadWritePaths=/var/spool/postfix/maildrop
 
 UMask=077

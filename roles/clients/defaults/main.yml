@@ -3,6 +3,9 @@
 # Create SSH config when using SFTP protocoll
 restic_backup_ssh_create_config: false
 
+# Key file for SFTP
+restic_backup_ssh_key_file: "~/.ssh/id_restic"
+
 restic_backup_repository: >-
   {%- if restic_backup_proto is defined -%}
     {{ restic_backup_proto }}:
@@ -19,17 +22,17 @@ restic_backup_cmd: >-
     restic -o sftp.command=ssh {% if restic_backup_user is defined -%}
              {{ restic_backup_user }}@
            {%- endif -%}
-           {{ restic_backup_host }} -i {{ restic_backup_ssh_key_file | mandatory }} -s sftp'
+           {{ restic_backup_host }} -i {{ restic_backup_ssh_key_file }} -s sftp'
   {%- else -%}
     restic
   {%- endif -%}
 
-restic_client_backup_tool_repo: https://github.com/dreknix/tools-restic-backup.git
+restic_backup_client_tool_repo: https://github.com/dreknix/tools-restic-backup.git
 
-restic_client_backup_dir: /srv/restic
+restic_backup_client_dir: /srv/restic
 
-restic_client_backup_cache_dir: /var/cache/restic
+restic_backup_client_cache_dir: /var/cache/restic
 
-restic_client_systemd_path: /usr/local/lib/systemd/system
+restic_backup_client_systemd_path: /usr/local/lib/systemd/system
 
 ...
