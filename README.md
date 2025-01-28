@@ -58,6 +58,15 @@ For more variables see
 variables `restic_backup_repository` and `restic_back_cmd` are automatically
 created (see [`roles/clients/default/all.yml`](roles/clients/default/all.yml)).
 
+The variable `restic_install_type` specifies who restic will be installed on the
+system.
+
+* `ansible` - The collection installs a binary directly from GitHub. The version
+  of the executable can be controlled by setting `restic_version`.
+* `system` - The package manager if used to install restic.
+* `other` - The executable will be installed by other options outside this
+  collection. A test if the executable is available is performed.
+
 ## Available Tags and Groups
 
 The tag `restic` activates the playbook of the collection. The binary `restic`
