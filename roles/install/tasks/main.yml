@@ -1,26 +1,25 @@
 ---
 
-- name: Check if restic is installed
-  ansible.builtin.stat:
-    path: "{{ restic_bin_path }}"
-  register: restic_binary
-
-- name: Check which version of restic is installed
-  ansible.builtin.shell: |
-    {{ restic_bin_path }} version
-  register: restic_version_check
+- name: Handle install type 'ansible'
+  ansible.builtin.include_tasks: check.yml
   when: >
-    restic_binary.stat.exists
-    and restic_binary.stat.executable
+    restic_install_type == "ansible"
+
+- name: Handle install type 'system'
+  become: true
+  ansible.builtin.package:
+    name: restic
+    state: present
+  when:
+    restic_install_type == "system"
+
+- name: Handle install type 'other'
+  ansible.builtin.command: which restic
+  check_mode: false
   changed_when: false
-
-- name: Include 'install.yml'
-  ansible.builtin.include_tasks: install.yml
-  vars:
-    restic_version_string: "restic {{ restic_version }}"
-  when: >
-    not (restic_binary.stat.exists and restic_binary.stat.executable)
-    or restic_version_check.stdout is not defined
-    or restic_version_string not in restic_version_check.stdout
+  failed_when: test_restic.rc > 1
+  register: test_restic
+  when:
+    restic_install_type != "ansible" and restic_install_type != "system"
 
 ...

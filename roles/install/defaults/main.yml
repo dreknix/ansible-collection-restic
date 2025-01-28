@@ -1,5 +1,7 @@
 ---
 
+restic_install_type: ansible
+
 restic_default_path: >-
   {{ default_install_path | default('/usr/local', true) }}
 
