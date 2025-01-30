@@ -16,6 +16,9 @@ ProtectHome=read-only
 ProtectSystem=strict
 ReadWritePaths={{ restic_backup_client_cache_dir }}
 ReadWritePaths=/var/spool/postfix/maildrop
+{% if restic_backup_prom_directory is defined %}
+ReadWritePaths={{ restic_backup_prom_directory }}
+{% endif %}
 
 UMask=077
 
